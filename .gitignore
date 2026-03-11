@@ -1,0 +1,12 @@
+# Python
+__pycache__/
+*.pyc
+
+# Runtime
+.env
+logs/
+outputs/
+.tmp/
+
+# macOS
+.DS_Store
