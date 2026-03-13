@@ -6,6 +6,8 @@ CONDA_ENV="${2:-storyline}"
 REPO_URL="${3:-https://github.com/FireRedTeam/FireRed-OpenStoryline.git}"
 BRANCH="${4:-main}"
 PROJECT_DIR="${WORKSPACE}/FireRed-OpenStoryline"
+SCRIPT_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+EMBEDDED_DIR="${SCRIPT_ROOT}/FireRed-OpenStoryline"
 
 if ! command -v git >/dev/null 2>&1; then
   echo "git is required." >&2
@@ -18,8 +20,13 @@ fi
 
 mkdir -p "${WORKSPACE}"
 
-if [[ ! -d "${PROJECT_DIR}/.git" ]]; then
-  git clone --depth 1 --branch "${BRANCH}" "${REPO_URL}" "${PROJECT_DIR}"
+if [[ ! -d "${PROJECT_DIR}" ]]; then
+  if [[ -d "${EMBEDDED_DIR}" ]]; then
+    echo "Use embedded main project: ${EMBEDDED_DIR}"
+    rsync -a "${EMBEDDED_DIR}/" "${PROJECT_DIR}/"
+  else
+    git clone --depth 1 --branch "${BRANCH}" "${REPO_URL}" "${PROJECT_DIR}"
+  fi
 fi
 
 source "$(conda info --base)/etc/profile.d/conda.sh"

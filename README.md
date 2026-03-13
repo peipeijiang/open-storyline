@@ -5,6 +5,8 @@
 一个可直接复用的 FireRed-OpenStoryline 自动化封装仓库。  
 目标：别人 clone 后按 3 步即可跑通。
 
+当前仓库已内置官方主项目目录 `FireRed-OpenStoryline/`（默认优先使用，不再依赖在线拉取）。
+
 ## 3 步快速开始
 
 ### 1) 初始化环境（克隆主项目 + 安装依赖）
@@ -105,3 +107,6 @@ bash scripts/run_batch.sh \
   --count 10 \
   --duration 30
 ```
+
+
+This repo includes the official main project under `FireRed-OpenStoryline/` and `bootstrap.sh` will use it first.
