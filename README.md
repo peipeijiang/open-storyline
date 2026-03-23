@@ -2,53 +2,48 @@
 
 中文 | [English](#english)
 
-一个面向 OpenStoryline 工作流的可发布 macOS 桌面应用与独立运行仓库。
+Open Storyline 是一个面向视频生成工作流的可发布 macOS 桌面应用仓库。你可以直接下载安装 App，也可以用仓库里的脚本模式启动内置工作流。
 
-你可以按两种方式使用它：
+## 下载
 
-- 桌面 App：直接下载 `.dmg` / `.zip`，安装后用图形界面导入素材、填写提示词、生成视频。
-- 脚本模式：clone 仓库后，用内置脚本启动 FireRed-OpenStoryline 服务并批量跑工作流。
+最新桌面版 Release：
 
-## 下载桌面 App
+- [OpenStoryline Studio v0.1.0](https://github.com/peipeijiang/open-storyline/releases/tag/v0.1.0)
 
-Release 页面：
+当前已发布的 macOS Apple Silicon 安装包：
 
-- [OpenStoryline Studio Releases](https://github.com/peipeijiang/open-storyline/releases)
-
-当前提供的 macOS Apple Silicon 安装包：
-
-- `OpenStoryline-Studio-*-arm64.dmg`
-- `OpenStoryline-Studio-*-arm64.zip`
+- `OpenStoryline-Studio-0.1.0-arm64.dmg`，`704,035,219` 字节
+- `OpenStoryline-Studio-0.1.0-arm64.zip`，`693,827,018` 字节
 
 说明：
 
-- 当前发布包面向 macOS arm64。
-- App 已内置 `FireRed-OpenStoryline/` 后端目录，不需要你再单独下载主项目。
-- 首次启动如果被 macOS 拦截，请在“系统设置 -> 隐私与安全性”中允许打开。
+- 当前安装包面向 macOS arm64。
+- App 内已经包含 `FireRed-OpenStoryline` 后端运行目录，不需要再单独下载主项目。
+- 如果首次启动被 macOS 拦截，请到“系统设置 -> 隐私与安全性”中允许打开。
 
 ## App 能做什么
 
-- 导入图片和视频素材
+- 导入本地图片和视频素材
 - 用自然语言提示词驱动完整工作流
-- 自动执行镜头理解、筛选、分组、文案、配音、时间线规划、渲染
+- 自动执行镜头理解、筛选、分组、文案、配音、时间线规划和渲染
 - 输出单条或多条成片
-- 在界面中查看执行轨迹、失败原因和导出路径
+- 在界面中查看执行进度、报错信息和导出路径
 
 适合的提示词示例：
 
 ```text
-生产5个25s视频，要求无背景音和字幕，配音为英文可爱女生，风格为tiktok带货风格
+生产3个25s视频，要求无背景音和字幕，配音为英文可爱女生，风格为tiktok带货风格
 ```
 
 ```text
-Create 3 product videos, 20 seconds each, no subtitles, no BGM, cute English female voice, TikTok commerce style.
+Create 3 product videos, 25 seconds each, no subtitles, no background music, cute English female voice, TikTok commerce style.
 ```
 
-## App 使用方式
+## 快速开始
 
 ### 1. 下载并安装
 
-从 Releases 页面下载最新的：
+从 Release 页面下载：
 
 - `.dmg`：适合普通安装
 - `.zip`：适合直接解压运行
@@ -59,14 +54,14 @@ Create 3 product videos, 20 seconds each, no subtitles, no BGM, cute English fem
 
 首次运行时，App 会自动尝试启动内置后端。
 
-### 3. 配置模型与服务
+### 3. 配置模型
 
-在 App 左侧配置区填写：
+在左侧配置区填写：
 
 - `LLM`：`model`、`base_url`、`api_key`
 - `VLM`：`model`、`base_url`、`api_key`
 - `TTS`：当前主要使用 `MiniMax`
-- `Pexels API Key`：只有在需要在线搜素材时才需要
+- `Pexels API Key`：只有需要联网搜素材时才需要
 
 至少需要：
 
@@ -74,67 +69,69 @@ Create 3 product videos, 20 seconds each, no subtitles, no BGM, cute English fem
 - 一个可用的 VLM
 - 一个可用的 TTS 配置
 
-### 4. 导入素材并执行
+### 4. 添加素材并执行
 
-- 点击添加素材
+- 点击右上角添加素材
 - 输入提示词
-- 直接执行
+- 直接执行工作流
 
-App 会通过 WebSocket 持续回传：
+App 会持续显示：
 
 - 当前执行节点
 - 工具进度
 - 错误信息
 - 导出视频路径
 
-## 当前这个版本的重点修复
+## v0.1.0 重点修复
 
-本仓库当前 Release 对以下问题做了增强：
+2026 年 3 月 20 日同步的 `v0.1.0` 桌面版包含以下修复：
 
-- 更准确识别类似 `无背景音和字幕` 的提示词，不再漏判“无字幕”
-- 更准确识别类似 `英文可爱女生` 的提示词，不再要求必须写成“英文女声”
-- 对 `无字幕` 和 `无 BGM` 使用更强的时间线与渲染约束
-- 配音时长更贴近最终画面时长，减少口播提前结束导致的长尾空镜
-- 后端会把 `ExceptionGroup` 展开为更可读的真实错误信息
+- 同一会话里重复上传素材时，新素材会替换旧素材，不再持续累计重复素材
+- 右上角素材数量标记支持悬停查看当前素材列表
+- App 重启后恢复会话时，不再复用已过期的远端附件绑定
+- `generate_script` 默认回退路径不再返回空结果
+- 脚本时长校验改为尽量继续执行，避免因为拟合不够严而直接中断整条流程
+- 英文配音更贴近镜头时长，减少最后一句没有说完或明显留白的情况
 
-## App 常见问题
+## 常见问题
 
-### 1. 打开后端失败
+### 1. 打开 App 后是空白页
 
-先检查本机环境是否满足：
+请优先升级到最新 Release。旧版本在前端初始化和会话恢复失败时，空白页问题更明显。
 
-- `python3`
-- 可用的运行环境
-- 模型接口地址和密钥填写正确
+### 2. 新建会话后提示“会话已过期”
 
-如果 App 启动后端失败，可查看：
+请优先升级到最新 Release。当前版本已经避免在会话恢复时继续引用过期附件。
 
-- `~/Library/Logs/OpenStoryline Studio/backend.log`
+### 3. 明明写了“无字幕”，结果还是出了字幕
 
-### 2. 提示词写了“无字幕”，结果还有字幕
+请尽量把约束直接写在同一句提示词里，例如：
 
-请先确认你使用的是最新 Release。旧版本对并列说法的识别较弱，比如：
+```text
+生产3个25s视频，要求无背景音和字幕，配音为英文可爱女生，风格为tiktok带货风格
+```
 
-- `无背景音和字幕`
-- `不要背景音和字幕`
+如果仍然出现偏差，请先确认你使用的是最新 Release。
 
-最新版本已经专门补过这类识别。
+### 4. WebSocket 断开或报 `1006`
 
-### 3. WebSocket 断开或会话过期
+这类错误通常和后端异常、配置错误或网络中断有关。请先检查模型配置，再查看后端日志：
 
-如果出现以下问题：
+- `~/Library/Logs/openstoryline-app/OpenStoryline Studio/backend.log`
 
-- `WebSocket 连接关闭(1006)`
-- `会话已过期`
-- `ExceptionGroup: unhandled errors in a TaskGroup`
+### 5. 提示“创建会话失败: 500”
 
-请先升级到最新 Release。当前版本已经对这些错误提示做了更清晰的归因和更友好的前端展示。
+这通常和模型配置、后端启动状态或节点异常有关。先检查：
+
+- `LLM` / `VLM` / `TTS` 的 `base_url`、`model`、`api_key`
+- 后端是否已经成功启动
+- 后端日志里是否有真实报错堆栈
 
 ## 仓库结构
 
 ```text
 .
-├── FireRed-OpenStoryline/   # 内置主项目后端
+├── FireRed-OpenStoryline/   # 内置后端项目
 ├── scripts/                 # 启动、发布、运行脚本
 ├── tools/                   # 工作流辅助脚本
 ├── config.public.toml       # 脱敏配置示例
@@ -163,7 +160,7 @@ bash scripts/start_service.sh start /path/to/workspace/FireRed-OpenStoryline sto
 bash scripts/start_service.sh status /path/to/workspace/FireRed-OpenStoryline
 ```
 
-### 3. 直接跑工作流
+### 3. 跑工作流
 
 单条生成：
 
@@ -171,7 +168,7 @@ bash scripts/start_service.sh status /path/to/workspace/FireRed-OpenStoryline
 bash scripts/run_workflow.sh \
   /path/to/workspace/FireRed-OpenStoryline \
   --media /path/a.mp4 /path/b.mp4 \
-  --instruction "Create a 30s video, English female voiceover, no subtitles, no BGM."
+  --instruction "Create a 30s video, English female voiceover, no subtitles, no background music."
 ```
 
 批量生成：
@@ -179,7 +176,7 @@ bash scripts/run_workflow.sh \
 ```bash
 bash scripts/run_batch.sh \
   /path/to/workspace/FireRed-OpenStoryline \
-  --instruction "Create 10 product videos, English female voiceover, no subtitles, no BGM" \
+  --instruction "Create 10 product videos, English female voiceover, no subtitles, no background music" \
   --count 10 \
   --duration 30
 ```
@@ -196,79 +193,68 @@ bash scripts/run_batch.sh \
 
 - `[search_media]`: `pexels_api_key`
 
-仓库中的 `config.public.toml` 是脱敏示例，不包含真实密钥。
-
-## 发布这个仓库到你自己的 GitHub
-
-```bash
-bash scripts/publish_github.sh /path/to/this/repo your-org your-repo
-```
+`config.public.toml` 是脱敏示例，不包含真实密钥。
 
 ---
 
 # English
 
-Open Storyline is a standalone distribution repo for an OpenStoryline-based workflow, with a packaged macOS desktop app and script-based automation.
+Open Storyline is a distributable macOS desktop app repo for an OpenStoryline-based video workflow. You can either download the packaged app or run the built-in scripts directly.
 
-You can use it in two ways:
+## Download
 
-- Desktop App: download the release asset and run the GUI directly
-- Script Mode: clone the repo and run the built-in FireRed-OpenStoryline workflow from shell scripts
+Latest desktop release:
 
-## Download The Desktop App
+- [OpenStoryline Studio v0.1.0](https://github.com/peipeijiang/open-storyline/releases/tag/v0.1.0)
 
-Releases page:
+Current macOS Apple Silicon assets:
 
-- [OpenStoryline Studio Releases](https://github.com/peipeijiang/open-storyline/releases)
-
-Current release assets:
-
-- `OpenStoryline-Studio-*-arm64.dmg`
-- `OpenStoryline-Studio-*-arm64.zip`
+- `OpenStoryline-Studio-0.1.0-arm64.dmg`, `704,035,219` bytes
+- `OpenStoryline-Studio-0.1.0-arm64.zip`, `693,827,018` bytes
 
 Notes:
 
-- Current builds target macOS Apple Silicon.
-- The packaged app already includes the `FireRed-OpenStoryline/` backend.
+- Current builds target macOS arm64.
+- The packaged app already includes the `FireRed-OpenStoryline` backend runtime.
 - If macOS blocks first launch, allow it in System Settings -> Privacy & Security.
 
 ## What The App Does
 
-- Import image and video assets
-- Drive the full workflow with natural-language prompts
-- Run clip understanding, filtering, grouping, script generation, voiceover, timeline planning, and rendering
+- Import local image and video assets
+- Run the workflow through natural-language prompts
+- Execute clip understanding, filtering, grouping, script generation, voiceover, timeline planning, and rendering
 - Produce one or multiple final videos
-- Show tool progress, failures, and output paths in the GUI
+- Show progress, errors, and export paths in the GUI
 
 Example prompts:
 
 ```text
-Create 3 product videos, 20 seconds each, no subtitles, no BGM, cute English female voice, TikTok commerce style.
+Create 3 product videos, 25 seconds each, no subtitles, no background music, cute English female voice, TikTok commerce style.
 ```
 
-## How To Use The App
+## Quick Start
 
-### 1. Download And Install
+### 1. Download and install
 
-From Releases, download either:
+From the release page, download either:
 
-- `.dmg` for normal installation
+- `.dmg` for standard installation
 - `.zip` for direct extraction and launch
 
-### 2. Launch The App
+### 2. Launch the app
 
 Open `OpenStoryline Studio.app`.
 
-The app will try to start its bundled backend automatically on first run.
+On first launch, the app will try to start its bundled backend automatically.
 
-### 3. Configure Models And Services
+### 3. Configure models
 
-Fill these in the left configuration panel:
+Fill these in on the left configuration panel:
 
 - `LLM`: `model`, `base_url`, `api_key`
 - `VLM`: `model`, `base_url`, `api_key`
-- `TTS`: currently mainly MiniMax
-- `Pexels API Key`: only needed when searching remote media
+- `TTS`: currently mainly `MiniMax`
+- `Pexels API Key`: only needed for remote media search
 
 At minimum you need:
 
@@ -276,53 +262,63 @@ At minimum you need:
 - one working VLM
 - one working TTS provider
 
-### 4. Import Assets And Run
+### 4. Add media and run
 
-- add media
+- add media from the top right
 - type your prompt
 - run the workflow
 
-The app streams back:
+The app continuously reports:
 
 - active workflow node
 - tool progress
-- error messages
+- error details
 - exported video paths
 
-## Key Fixes In Current Release
+## Key Fixes In v0.1.0
 
-- better prompt parsing for phrases like `no background music and subtitles`
-- better detection of prompts like `cute English girl voice`
-- stronger subtitle-off and BGM-off enforcement
-- voiceover duration fits the planned visual timeline more closely
-- backend unwraps `ExceptionGroup` errors into clearer user-facing messages
+The desktop build synced on March 20, 2026 includes:
+
+- re-uploading materials in the same conversation now replaces old materials instead of accumulating duplicates
+- the top-right material count badge now shows the current material list on hover
+- session restore no longer reuses expired remote attachment bindings after restart
+- the `generate_script` default fallback no longer returns empty output
+- script timing validation now prefers best-effort continuation instead of failing the whole run
+- English voiceover fitting is closer to the planned visual duration, reducing unfinished last lines and long silent tails
 
 ## Common Issues
 
-### Backend fails to start
+### Blank page after launch
 
-Check your local environment and model configuration first.
+Please update to the latest release first. Older builds were more fragile during app initialization and session restore.
 
-Backend log path:
+### Session expired on a new conversation
 
-- `~/Library/Logs/OpenStoryline Studio/backend.log`
+Please update to the latest release first. Recent builds avoid reusing expired attachment bindings during restore.
 
-### Prompt says “no subtitles” but output still contains subtitles
+### Prompt says “no subtitles” but subtitles still appear
 
-Please update to the latest release first. Older builds were weaker at parsing combined phrases such as:
+Keep the constraints explicit in a single prompt, for example:
 
-- `no background music and subtitles`
-- `without BGM and subtitles`
+```text
+Create 3 product videos, 25 seconds each, no subtitles, no background music, cute English female voice, TikTok commerce style.
+```
 
-### WebSocket closed or session expired
+If the result still drifts, make sure you are on the latest release.
 
-If you see errors such as:
+### WebSocket closed with `1006`
 
-- `WebSocket 1006`
-- `session expired`
-- `ExceptionGroup: unhandled errors in a TaskGroup`
+This is usually caused by backend exceptions, invalid model settings, or transient connectivity issues. Check backend logs first:
 
-please upgrade to the latest release first. Recent builds improve both recovery and user-facing error clarity.
+- `~/Library/Logs/openstoryline-app/OpenStoryline Studio/backend.log`
+
+### `500` when creating a session
+
+This is usually related to model config, backend startup failure, or a workflow node crash. Check:
+
+- `base_url`, `model`, and `api_key` for `LLM`, `VLM`, and `TTS`
+- whether the backend started successfully
+- the backend log for the real stack trace
 
 ## Repository Layout
 
@@ -349,13 +345,19 @@ bash scripts/bootstrap.sh /path/to/workspace storyline
 bash scripts/start_service.sh start /path/to/workspace/FireRed-OpenStoryline storyline
 ```
 
+Optional status check:
+
+```bash
+bash scripts/start_service.sh status /path/to/workspace/FireRed-OpenStoryline
+```
+
 ### 3. Run workflow
 
 ```bash
 bash scripts/run_workflow.sh \
   /path/to/workspace/FireRed-OpenStoryline \
   --media /path/a.mp4 /path/b.mp4 \
-  --instruction "Create a 30s video, English female voiceover, no subtitles, no BGM."
+  --instruction "Create a 30s video, English female voiceover, no subtitles, no background music."
 ```
 
 Batch mode:
@@ -363,7 +365,7 @@ Batch mode:
 ```bash
 bash scripts/run_batch.sh \
   /path/to/workspace/FireRed-OpenStoryline \
-  --instruction "Create 10 product videos, English female voiceover, no subtitles, no BGM" \
+  --instruction "Create 10 product videos, English female voiceover, no subtitles, no background music" \
   --count 10 \
   --duration 30
 ```
